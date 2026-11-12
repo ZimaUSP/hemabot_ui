@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+# Starts the Hemabot web UI. Run by hemabot-ui.service; can also be run by hand.
+set -euo pipefail
+
+script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+app_dir="$(cd "$script_dir/../.." && pwd)"
+# shellcheck source=deploy/bin/ros-env.sh
+source "$script_dir/ros-env.sh"
+
+if [[ "${HEMABOT_UI_BACKEND:-ros2}" == "ros2" ]]; then
+  # rclpy and the message packages come from the ROS installation.
+  hemabot_source_ros_distro
+  hemabot_source_workspace optional
+fi
+
+venv="${HEMABOT_UI_VENV:-$app_dir/.venv}"
+if [[ ! -x "$venv/bin/python" ]]; then
+  hemabot_log "virtualenv not found at $venv; run scripts/setup.sh"
+  exit 1
+fi
+exec "$venv/bin/python" -m hemabot_ui serve "$@"

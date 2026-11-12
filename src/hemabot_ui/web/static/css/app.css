@@ -1,0 +1,206 @@
+:root {
+  --bg: #f1f5f9;
+  --surface: #ffffff;
+  --text: #0f172a;
+  --muted: #64748b;
+  --border: #e2e8f0;
+  --primary: #0f766e;
+  --primary-text: #ffffff;
+  --warning: #b45309;
+  --danger: #dc2626;
+  --danger-pressed: #991b1b;
+  --ok-bg: #dcfce7;
+  --ok-text: #166534;
+  --warn-bg: #fef3c7;
+  --warn-text: #92400e;
+  --bad-bg: #fee2e2;
+  --bad-text: #991b1b;
+  --neutral-bg: #e2e8f0;
+  --neutral-text: #334155;
+  --joystick-base: #e2e8f0;
+  --joystick-ring: #cbd5e1;
+  --radius: 16px;
+  --gap: 12px;
+  color-scheme: light dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0b1120;
+    --surface: #111827;
+    --text: #e5e7eb;
+    --muted: #94a3b8;
+    --border: #1f2937;
+    --primary: #14b8a6;
+    --primary-text: #042f2e;
+    --warning: #f59e0b;
+    --ok-bg: #064e3b;
+    --ok-text: #a7f3d0;
+    --warn-bg: #78350f;
+    --warn-text: #fde68a;
+    --bad-bg: #7f1d1d;
+    --bad-text: #fecaca;
+    --neutral-bg: #1f2937;
+    --neutral-text: #cbd5e1;
+    --joystick-base: #1f2937;
+    --joystick-ring: #374151;
+  }
+}
+
+* { box-sizing: border-box; }
+
+html, body { margin: 0; }
+
+body {
+  min-height: 100dvh;
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  -webkit-tap-highlight-color: transparent;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
+
+.visually-hidden {
+  position: absolute; width: 1px; height: 1px; overflow: hidden;
+  clip: rect(0 0 0 0); white-space: nowrap;
+}
+
+/* --- top bar --------------------------------------------------------------------- */
+
+.topbar {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
+  gap: 8px; padding: 12px 16px;
+}
+.brand { margin: 0; font-size: 1.25rem; letter-spacing: .02em; }
+.status-pills { display: flex; flex-wrap: wrap; gap: 6px; }
+
+.pill {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 4px 10px; border-radius: 999px; font-size: .8rem; font-weight: 600;
+  background: var(--neutral-bg); color: var(--neutral-text);
+}
+.pill::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+.pill[data-tone="ok"] { background: var(--ok-bg); color: var(--ok-text); }
+.pill[data-tone="warn"] { background: var(--warn-bg); color: var(--warn-text); }
+.pill[data-tone="bad"] { background: var(--bad-bg); color: var(--bad-text); }
+
+/* --- layout ---------------------------------------------------------------------- */
+
+.layout {
+  display: grid; gap: var(--gap);
+  padding: 0 16px 16px;
+  grid-template-columns: 1fr;
+  grid-template-areas: "pilot" "drive" "settings" "stop";
+  max-width: 1100px; margin: 0 auto;
+}
+.pilot-card { grid-area: pilot; }
+.drive-card { grid-area: drive; }
+.settings-card { grid-area: settings; }
+.stop-bar { grid-area: stop; }
+
+@media (min-width: 820px) {
+  .layout {
+    grid-template-columns: minmax(0, 1.4fr) minmax(280px, 1fr);
+    /* Extra height from the joystick card goes below the stop button. */
+    grid-template-rows: auto auto minmax(0, 1fr);
+    grid-template-areas:
+      "drive pilot"
+      "drive settings"
+      "drive stop";
+    align-items: start;
+  }
+  .drive-card { align-self: stretch; }
+}
+
+.card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 16px;
+}
+.card-title { margin: 0 0 8px; font-size: 1rem; }
+.muted { color: var(--muted); font-size: .85rem; margin: 6px 0 0; }
+
+/* --- pilot ----------------------------------------------------------------------- */
+
+.pilot-message { margin: 0 0 12px; }
+.pilot-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+
+/* --- buttons --------------------------------------------------------------------- */
+
+.button {
+  appearance: none; border: 1px solid var(--border); background: var(--surface); color: var(--text);
+  border-radius: 12px; padding: 12px 18px; min-height: 48px;
+  font: inherit; font-weight: 600; cursor: pointer;
+}
+.button:disabled { opacity: .45; cursor: not-allowed; }
+.button.primary { background: var(--primary); border-color: var(--primary); color: var(--primary-text); }
+.button.warning { background: transparent; border-color: var(--warning); color: var(--warning); }
+.button:focus-visible { outline: 3px solid var(--primary); outline-offset: 2px; }
+
+.stop-bar { position: sticky; bottom: calc(8px + env(safe-area-inset-bottom)); }
+.button.stop {
+  width: 100%; min-height: 64px; font-size: 1.3rem; letter-spacing: .08em;
+  background: var(--danger); border-color: var(--danger); color: #fff;
+  box-shadow: 0 6px 16px rgb(220 38 38 / .35);
+}
+.button.stop:active:not(:disabled) { background: var(--danger-pressed); }
+
+/* --- joystick -------------------------------------------------------------------- */
+
+.drive-card { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; }
+
+.joystick {
+  position: relative;
+  width: min(78vw, 46vh, 340px); aspect-ratio: 1;
+  border-radius: 50%; background: var(--joystick-base);
+  touch-action: none; user-select: none; -webkit-user-select: none;
+  transition: opacity .2s;
+}
+@media (min-width: 820px) { .joystick { width: min(40vw, 60vh, 420px); } }
+.joystick[data-enabled="false"] { opacity: .4; }
+.joystick-ring {
+  position: absolute; inset: 22%; border-radius: 50%;
+  border: 2px dashed var(--joystick-ring); pointer-events: none;
+}
+.joystick-knob {
+  position: absolute; left: 50%; top: 50%;
+  width: 34%; aspect-ratio: 1; border-radius: 50%;
+  background: var(--primary); box-shadow: 0 6px 14px rgb(0 0 0 / .25);
+  transform: translate(-50%, -50%); pointer-events: none;
+  will-change: transform;
+}
+.joystick[data-active="true"] .joystick-knob { transition: none; }
+.joystick[data-active="false"] .joystick-knob { transition: transform .15s ease-out; }
+
+.hint { margin: 0; color: var(--muted); font-size: .85rem; text-align: center; }
+.hint-keyboard { display: none; }
+@media (hover: hover) and (pointer: fine) {
+  .hint-keyboard { display: block; }
+  .hint-touch { display: none; }
+}
+kbd {
+  display: inline-block; min-width: 1.6em; padding: 1px 5px; margin: 0 1px;
+  border: 1px solid var(--border); border-bottom-width: 2px; border-radius: 6px;
+  font: inherit; font-size: .8rem; text-align: center; background: var(--bg);
+}
+
+/* --- speed & telemetry ----------------------------------------------------------- */
+
+.speed-header { display: flex; justify-content: space-between; align-items: baseline; }
+.speed-header .card-title { margin: 0; }
+#speed-value { font-weight: 700; font-variant-numeric: tabular-nums; }
+#speed { width: 100%; margin: 12px 0 0; accent-color: var(--primary); height: 32px; }
+
+.telemetry { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 12px 0 0; }
+.telemetry div { background: var(--bg); border-radius: 10px; padding: 8px 10px; }
+.telemetry dt { font-size: .75rem; color: var(--muted); }
+.telemetry dd { margin: 2px 0 0; font-weight: 700; font-variant-numeric: tabular-nums; }
+
+/* --- toast ----------------------------------------------------------------------- */
+
+.toast {
+  position: fixed; left: 50%; bottom: calc(96px + env(safe-area-inset-bottom));
+  transform: translateX(-50%); max-width: calc(100vw - 32px);
+  background: var(--text); color: var(--bg);
+  padding: 10px 16px; border-radius: 12px; font-size: .9rem;
+  box-shadow: 0 8px 24px rgb(0 0 0 / .25); z-index: 10;
+}

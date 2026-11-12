@@ -1,0 +1,67 @@
+[build-system]
+requires = ["hatchling>=1.18"]
+build-backend = "hatchling.build"
+
+[project]
+name = "hemabot-ui"
+version = "0.1.0"
+description = "Web user interface to operate the Hemabot hospital robot over the local network."
+readme = "README.md"
+license = { file = "LICENSE" }
+# The robot runs Ubuntu 22.04 + ROS 2 Humble, whose system Python is 3.10.
+requires-python = ">=3.10"
+dependencies = [
+    "fastapi>=0.110,<1",
+    "uvicorn>=0.29,<1",
+    "websockets>=12,<16",
+    "pydantic>=2.6,<3",
+    "pydantic-settings>=2.2,<3",
+]
+
+[project.scripts]
+hemabot-ui = "hemabot_ui.cli:main"
+
+[dependency-groups]
+dev = [
+    "pytest>=8",
+    "pytest-asyncio>=0.23",
+    "httpx>=0.27",
+    "ruff>=0.5",
+    "mypy>=1.10",
+    "shellcheck-py>=0.10",
+    "pytest-timeout>=2.4.0",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/hemabot_ui"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+markers = [
+    "ros: needs a real ROS 2 installation (rclpy); run on the robot with `pytest -m ros`",
+]
+addopts = "-m 'not ros'"
+timeout = 60
+filterwarnings = [
+    # Newer Starlette nudges towards httpx2; httpx works fine for the test client.
+    "ignore:Using `httpx` with `starlette.testclient` is deprecated",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "SIM", "RUF", "ASYNC"]
+
+[tool.mypy]
+python_version = "3.10"
+strict = true
+files = ["src/hemabot_ui"]
+
+[[tool.mypy.overrides]]
+module = ["rclpy", "rclpy.*", "geometry_msgs", "geometry_msgs.*"]
+ignore_missing_imports = true

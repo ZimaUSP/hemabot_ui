@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+# Starts the Hemabot ROS 2 bringup (motors, IMU, LiDAR, twist_mux, ...).
+# Run by hemabot-ros.service; can also be run by hand for debugging.
+set -euo pipefail
+
+script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=deploy/bin/ros-env.sh
+source "$script_dir/ros-env.sh"
+
+hemabot_source_ros_distro
+hemabot_source_workspace required
+
+package="${HEMABOT_ROS_LAUNCH_PACKAGE:-minihema_launch}"
+launch_file="${HEMABOT_ROS_LAUNCH_FILE:-minihema_launch.py}"
+read -r -a extra_args <<<"${HEMABOT_ROS_LAUNCH_ARGS:-}"
+
+# The robot's own scripts assume the workspace is the working directory.
+cd "$HEMABOT_ROS_WS"
+hemabot_log "launching $package $launch_file ${extra_args[*]}"
+exec ros2 launch "$package" "$launch_file" "${extra_args[@]}"

@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0f766e">
+  <meta name="description" content="Controle manual do robô hospitalar Hemabot">
+  <title>Hemabot</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/app.css">
+  <script type="module" src="js/main.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <h1 class="brand">Hemabot</h1>
+    <div class="status-pills">
+      <span id="server-status" class="pill" data-tone="neutral">Conectando…</span>
+      <span id="robot-status" class="pill" data-tone="neutral">Robô: —</span>
+    </div>
+  </header>
+
+  <main class="layout">
+    <section class="card pilot-card" aria-labelledby="pilot-title">
+      <h2 id="pilot-title" class="card-title">Controle</h2>
+      <p id="pilot-message" class="pilot-message">Conectando ao robô…</p>
+      <div class="pilot-actions">
+        <button id="acquire-button" type="button" class="button primary" disabled>Assumir controle</button>
+        <button id="takeover-button" type="button" class="button warning" hidden>Tomar controle</button>
+        <button id="release-button" type="button" class="button" hidden>Liberar controle</button>
+      </div>
+    </section>
+
+    <section class="card drive-card" aria-labelledby="drive-title">
+      <h2 id="drive-title" class="card-title visually-hidden">Direção</h2>
+      <div id="joystick" class="joystick" data-enabled="false" role="application"
+           aria-label="Joystick: arraste para mover o robô">
+        <div class="joystick-ring"></div>
+        <div id="joystick-knob" class="joystick-knob"></div>
+      </div>
+      <p class="hint hint-touch">Arraste o círculo para mover o robô</p>
+      <p class="hint hint-keyboard">Teclado: <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> ou setas · <kbd>Espaço</kbd> para parar</p>
+    </section>
+
+    <section class="card settings-card" aria-labelledby="speed-title">
+      <div class="speed-header">
+        <h2 id="speed-title" class="card-title"><label for="speed">Velocidade</label></h2>
+        <output id="speed-value" for="speed">50%</output>
+      </div>
+      <input id="speed" type="range" min="10" max="100" step="10" value="50">
+      <p id="speed-limits" class="muted">máx. — m/s · — rad/s</p>
+      <dl class="telemetry">
+        <div><dt>Linear</dt><dd id="telemetry-linear">0.00 m/s</dd></div>
+        <div><dt>Angular</dt><dd id="telemetry-angular">0.00 rad/s</dd></div>
+      </dl>
+    </section>
+
+    <div class="stop-bar">
+      <button id="stop-button" type="button" class="button stop" disabled>PARAR</button>
+    </div>
+  </main>
+
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+</body>
+</html>

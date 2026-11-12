@@ -1,0 +1,20 @@
+[Unit]
+Description=Hemabot ROS 2 bringup (minihema_launch)
+Documentation=file://@APP_DIR@/README.md
+After=network.target
+
+[Service]
+Type=simple
+User=@SERVICE_USER@
+EnvironmentFile=@ENV_FILE@
+ExecStart=@APP_DIR@/deploy/bin/hemabot-ros-launch
+# ros2 launch shuts its nodes down cleanly on SIGINT (like Ctrl+C).
+KillSignal=SIGINT
+TimeoutStopSec=30
+Restart=on-failure
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

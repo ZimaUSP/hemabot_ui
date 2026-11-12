@@ -1,0 +1,21 @@
+[Unit]
+Description=Hemabot web user interface
+Documentation=file://@APP_DIR@/README.md
+After=network.target hemabot-ros.service
+Wants=hemabot-ros.service
+
+[Service]
+Type=simple
+User=@SERVICE_USER@
+EnvironmentFile=@ENV_FILE@
+ExecStart=@APP_DIR@/deploy/bin/hemabot-ui-serve
+# Allows binding port 80 without running as root.
+AmbientCapabilities=CAP_NET_BIND_SERVICE
+TimeoutStopSec=10
+Restart=always
+RestartSec=3
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
